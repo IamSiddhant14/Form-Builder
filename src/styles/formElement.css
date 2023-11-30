@@ -1,0 +1,14 @@
+#form_element_container {
+    width: 90%;
+    height: 30px;
+    background-color: white;
+    flex-shrink: 0;
+    margin-inline: auto;
+    margin-top: 15px;
+    border-radius: 5px;
+    padding: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    column-gap: 10px;
+}
