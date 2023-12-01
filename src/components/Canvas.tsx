@@ -11,6 +11,7 @@ const Canvas = ({ onDrop, onDragOver, droppedItems }: CanvasProps) => {
   const [selectedItem, setSelectedItem] = useState<DraggedItem | null>(null);
 
   function handleDownload() {
+    
     const droppedItemsData = localStorage.getItem("DroppedItems");
 
     if (droppedItemsData) {
