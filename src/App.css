@@ -4,29 +4,19 @@
   width: 100vw;
   height: 100vh;
   margin: 0%;
-  @media screen and (max-width: 600px) {
-    flex-direction: column;
-  }
+
 }
 
 #canvas_container {
   background-color: #F3F3F3;
   width: 75%;
   height: 100vh;
-
-  @media screen and (max-width: 600px) {
-    width: 100%;
-  }
 }
 
 #sidebar_container {
   background-color: #2D2D2D;
   width: 25%;
   height: 100vh;
-
-  @media screen and (max-width: 600px) {
-    width: 100%;
-  }
 }
 
 #text {

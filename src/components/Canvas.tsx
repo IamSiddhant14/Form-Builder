@@ -1,12 +1,33 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import "../styles/canvas.css";
 import Modal from "./Modal";
+import Button from "./Button";
+
+import "../styles/canvas.css";
 
 const Canvas = ({ onDrop, onDragOver, droppedItems }: CanvasProps) => {
+  
   const itemsRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<DraggedItem | null>(null);
 
+  function handleDownload() {
+    const droppedItemsData = localStorage.getItem("DroppedItems");
+
+    if (droppedItemsData) {
+      const blob = new Blob([droppedItemsData], { type: "application/json" });
+      const a = document.createElement("a");
+
+      a.download = "data.json";
+      a.href = window.URL.createObjectURL(blob);
+
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } else {
+      alert("No data found in local storage.");
+    }
+  }
+  
   const handleClickOutside = useCallback(
     (event: MouseEvent) => {
       if (
@@ -48,20 +69,9 @@ const Canvas = ({ onDrop, onDragOver, droppedItems }: CanvasProps) => {
     [droppedItems, onDrop]
   );
 
-  useEffect(() => {
-    if (!isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-      document.addEventListener("keyup", handlekeyPress);
-      return () => {
-        document.removeEventListener("mousedown", handleClickOutside);
-        document.removeEventListener("keyup", handlekeyPress);
-      };
-    }
-  }, [handleClickOutside, handlekeyPress, isOpen]);
-
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
 
+    e.preventDefault();
     const text = e.dataTransfer.getData("text/plain"); // Get the data being dropped
     const isExist = droppedItems.filter((itemdata) => itemdata.text === text);
 
@@ -94,12 +104,14 @@ const Canvas = ({ onDrop, onDragOver, droppedItems }: CanvasProps) => {
       setIsOpen(true);
     }
   };
+
   const handleDragStart = (
     e: React.DragEvent<HTMLParagraphElement>,
     item: DraggedItem
   ) => {
     e.dataTransfer.setData("text/plain", item.text); // Set the data being dragged
   };
+
   const handleClick = (
     e: React.MouseEvent<HTMLParagraphElement>,
     item: DraggedItem
@@ -131,19 +143,25 @@ const Canvas = ({ onDrop, onDragOver, droppedItems }: CanvasProps) => {
     onDrop(updatedItems);
   };
 
+  useEffect(() => {
+    if (!isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keyup", handlekeyPress);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+        document.removeEventListener("keyup", handlekeyPress);
+      };
+    }
+  }, [handleClickOutside, handlekeyPress, isOpen]);
+
   return (
     <>
       <div
         id="canvas"
-        style={{
-          width: "100%",
-          height: "100%",
-          position: "relative",
-        }}
         onDrop={handleDrop}
         onDragOver={onDragOver}
       >
-        Canvas
+        <Button onClick={handleDownload}>{"Download Configration"}</Button>
         {droppedItems.map((item, index) => (
           <>
             <p

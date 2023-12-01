@@ -1,13 +1,15 @@
 import { ChangeEvent, useState } from "react";
 import Button from "./Button";
 import close from "../assets/times.svg";
+
 import "../styles/modal.css";
 
 const Modal = ({ isOpen, onClose, selectedItem, onSubmitCallback }: ModalProps) => {
+
   const [formData, setFormData] = useState<FormState>({
     text: selectedItem?.text.substring(0, selectedItem.text.length - 3) ?? "",
     x: selectedItem?.screenX ?? 0,
-    y: selectedItem?.screenY ?? 0,
+    y: selectedItem?.screenY ?? 0,  
     fontsize: selectedItem?.fontSize ?? 12,
     fontweight: selectedItem?.fontWeight ?? 300,
   });
