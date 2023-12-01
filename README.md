@@ -2,8 +2,8 @@
 
 
 -> In order to set up locally and start the project use the following commands : 
-. npm install
-. npm run dev
+ npm install
+ npm run dev
 
 -> The project will open on http://localhost:5173/
 
