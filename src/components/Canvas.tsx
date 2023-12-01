@@ -1,48 +1,68 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import '../styles/canvas.css';
-import Modal from './Modal';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import "../styles/canvas.css";
+import Modal from "./Modal";
 
-const Canvas = ({ onDrop, onDragOver, droppedItems }) => {
-  const itemsRef = useRef(null);
+const Canvas = ({ onDrop, onDragOver, droppedItems }: CanvasProps) => {
+  const itemsRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null)
+  const [selectedItem, setSelectedItem] = useState<DraggedItem | null>(null);
 
-
-  const handleClickOutside = useCallback((event) => {
-    if (itemsRef.current && !itemsRef.current.contains(event.target)) {
-      const updatedItems = droppedItems.map((dropedItem) => {
-        if (dropedItem.isClicked) {
-          return {
-            ...dropedItem,
-            isClicked: false
+  const handleClickOutside = useCallback(
+    (event: MouseEvent) => {
+      if (
+        itemsRef.current &&
+        !itemsRef.current.contains(event.target as Node)
+      ) {
+        const updatedItems = droppedItems.map((dropedItem) => {
+          if (dropedItem.isClicked) {
+            return {
+              ...dropedItem,
+              isClicked: false,
+            };
+          } else {
+            return dropedItem;
           }
-        } else {
-          return dropedItem;
-        }
-      })
-      console.log("Updated Items", updatedItems)
-      onDrop(updatedItems)
-    }
-  }, [droppedItems, onDrop])
+        });
+        onDrop(updatedItems);
+      }
+    },
+    [droppedItems, onDrop]
+  );
 
+  const handlekeyPress = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Delete" || e.key === "Backspace") {
+        const updatedItems = droppedItems.filter(
+          (dropedItem) => !dropedItem.isClicked
+        );
+        onDrop(updatedItems);
+      } else if (e.key === "Enter") {
+        // open model
+        const updatedItems = droppedItems.filter(
+          (dropedItem) => dropedItem.isClicked
+        );
+        setSelectedItem(updatedItems[0]);
+        setIsOpen(true);
+      }
+    },
+    [droppedItems, onDrop]
+  );
 
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener("keyup", handlekeyPress)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener("keyup", handlekeyPress)
+    if (!isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keyup", handlekeyPress);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+        document.removeEventListener("keyup", handlekeyPress);
+      };
+    }
+  }, [handleClickOutside, handlekeyPress, isOpen]);
 
-    };
-  }, [handleClickOutside]);
-
-
-  const handleDrop = (e) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    console.log("window", e)
 
-    const text = e.dataTransfer.getData('text/plain'); // Get the data being dropped
-    console.log("data", text)
+    const text = e.dataTransfer.getData("text/plain"); // Get the data being dropped
     const isExist = droppedItems.filter((itemdata) => itemdata.text === text);
 
     if (isExist.length > 0) {
@@ -51,14 +71,14 @@ const Canvas = ({ onDrop, onDragOver, droppedItems }) => {
           return {
             ...dropedItem,
             screenX: e.pageX,
-            screenY: e.pageY
-          }
+            screenY: e.pageY,
+          };
         } else {
           return dropedItem;
         }
-      })
+      });
 
-      onDrop(updatedItems)
+      onDrop(updatedItems);
     } else {
       const draggedItem = {
         id: droppedItems.length + 1,
@@ -68,54 +88,57 @@ const Canvas = ({ onDrop, onDragOver, droppedItems }) => {
         isClicked: false,
         fontWeight: 300,
         fontSize: 12,
-      }
-      setSelectedItem(draggedItem)
+      };
+      setSelectedItem(draggedItem);
       onDrop([...droppedItems, draggedItem]);
       setIsOpen(true);
     }
-
   };
-  const handleDragStart = (e: any, item) => {
-    e.dataTransfer.setData('text/plain', item.text); // Set the data being dragged
-    console.log("Drag start")
-  }
-  const handleClick = (e, item: any) => {
+  const handleDragStart = (
+    e: React.DragEvent<HTMLParagraphElement>,
+    item: DraggedItem
+  ) => {
+    e.dataTransfer.setData("text/plain", item.text); // Set the data being dragged
+  };
+  const handleClick = (
+    e: React.MouseEvent<HTMLParagraphElement>,
+    item: DraggedItem
+  ) => {
     const updatedItems = droppedItems.map((dropedItem) => {
       if (dropedItem.text === item.text) {
         return {
           ...dropedItem,
-          isClicked: true
-        }
+          isClicked: true,
+        };
       } else {
         return {
           ...dropedItem,
-          isClicked: false
+          isClicked: false,
         };
       }
-    })
-    onDrop(updatedItems)
-  }
+    });
+    onDrop(updatedItems);
+  };
 
-  const handlekeyPress = (e) => {
-    console.log("e", e);
-    if (e.key === "Delete") {
-      const updatedItems = droppedItems.filter((dropedItem) => !dropedItem.isClicked)
-      onDrop(updatedItems)
-    } else if (e.key === "Enter") {
-      // open model
-      const updatedItems = droppedItems.filter((dropedItem) => dropedItem.isClicked)
-      setSelectedItem(updatedItems[0]);
-      setIsOpen(true)
-    }
-  }
+  const handleSubmitCallback = (updatedItem: DraggedItem) => {
+    const updatedItems = droppedItems.map((dropItem) => {
+      if (dropItem.id === updatedItem.id) {
+        return updatedItem;
+      } else {
+        return dropItem;
+      }
+    });
+    onDrop(updatedItems);
+  };
 
   return (
     <>
-      <div id="canvas"
+      <div
+        id="canvas"
         style={{
           width: "100%",
           height: "100%",
-          position: "relative"
+          position: "relative",
         }}
         onDrop={handleDrop}
         onDragOver={onDragOver}
@@ -123,13 +146,20 @@ const Canvas = ({ onDrop, onDragOver, droppedItems }) => {
         Canvas
         {droppedItems.map((item, index) => (
           <>
-            <p key={index} style={{
-              position: "absolute",
-              marginLeft: item.screenX,
-              marginTop: item.screenY,
-              border: item.isClicked && "2px solid red",
-              padding: "1rem"
-            }} id={item.id} ref={itemsRef} draggable
+            <p
+              key={index}
+              style={{
+                position: "absolute",
+                marginLeft: item.screenX,
+                marginTop: item.screenY,
+                border: item.isClicked ? "2px solid red" : undefined,
+                padding: "1rem",
+                fontWeight: `${item.fontWeight}`,
+                fontSize: `${item.fontSize}px`,
+              }}
+              id={item.id.toString()}
+              ref={itemsRef}
+              draggable
               onDragStart={(e) => handleDragStart(e, item)}
               onClick={(e) => handleClick(e, item)}
             >
@@ -138,9 +168,16 @@ const Canvas = ({ onDrop, onDragOver, droppedItems }) => {
           </>
         ))}
       </div>
-      {isOpen && <Modal x={selectedItem?.screenX} y={selectedItem?.screenY} isOpen={isOpen} onClose={() => setIsOpen(false)} name={'label'} />}
+      {isOpen && (
+        <Modal
+          selectedItem={selectedItem}
+          isOpen={isOpen}
+          onSubmitCallback={handleSubmitCallback}
+          onClose={() => setIsOpen(false)}
+        />
+      )}
     </>
-  )
-}
+  );
+};
 
-export default Canvas
+export default Canvas;

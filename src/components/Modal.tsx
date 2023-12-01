@@ -1,16 +1,15 @@
 import { ChangeEvent, useState } from "react";
 import Button from "./Button";
 import close from "../assets/times.svg";
-
 import "../styles/modal.css";
 
-const Modal = ({ isOpen, onClose, name, x, y }: Iprops) => {
-  const [formData, setFormData] = useState({
-    text: "",
-    x: x,
-    y: y,
-    fontsize: "",
-    fontweight: "",
+const Modal = ({ isOpen, onClose, selectedItem, onSubmitCallback }: ModalProps) => {
+  const [formData, setFormData] = useState<FormState>({
+    text: selectedItem?.text.substring(0, selectedItem.text.length - 3) ?? "",
+    x: selectedItem?.screenX ?? 0,
+    y: selectedItem?.screenY ?? 0,
+    fontsize: selectedItem?.fontSize ?? 12,
+    fontweight: selectedItem?.fontWeight ?? 300,
   });
 
   const handleChange = (e : ChangeEvent<HTMLInputElement>) => {
@@ -22,9 +21,21 @@ const Modal = ({ isOpen, onClose, name, x, y }: Iprops) => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement> )=> {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    if(selectedItem !== null) {
+    const updatedItem : DraggedItem = {
+      id : selectedItem?.id,
+      text : formData.text + selectedItem?.text.substring(selectedItem.text.length - 3),
+      screenX : Number(formData.x),
+      screenY : Number(formData.y),
+      fontWeight : Number(formData.fontweight),
+      fontSize : Number(formData.fontsize),
+      isClicked : selectedItem?.isClicked
+    }
+    onSubmitCallback(updatedItem);
+   }
     onClose();
 };
   return (
@@ -33,7 +44,7 @@ const Modal = ({ isOpen, onClose, name, x, y }: Iprops) => {
         <form onSubmit={handleSubmit} className="modal-content">
           <div className="heading-container">
             <h1 id="heading" style={{ color: "black", marginLeft: "-2px" }}>
-              Edit {name}
+              Edit 
             </h1>
             <img src={close} alt="close-icon" onClick={onClose} />
           </div>
@@ -87,7 +98,7 @@ const Modal = ({ isOpen, onClose, name, x, y }: Iprops) => {
             onChange={handleChange}
             required
           />
-          <Button onClick={onClose}>{"Save Changes"}</Button>
+          <Button >{"Save Changes"}</Button>
         </form>
       </div>
     </div >

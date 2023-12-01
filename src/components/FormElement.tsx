@@ -7,10 +7,9 @@ const FormElement = ({ name } : {
   name : string
 }) => {
 
-  const handleDragStart = (e ) => {
+  const handleDragStart = (e : React.DragEvent<HTMLDivElement> ) => {
     const uniqueId = generateUniqueId();
     e.dataTransfer.setData('text/plain', name + uniqueId); // Set the data being dragged
-    console.log("Drag start")
   }
   
   return (

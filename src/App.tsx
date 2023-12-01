@@ -1,19 +1,27 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import Canvas from "./components/Canvas";
-import Modal from "./components/Modal";
 import Sidebar from "./components/Sidebar";
+import { getLocalData, setLocalData } from "./helpers/localStorage";
 
 
 const App = () => {
-  const [droppedItems, setDroppedItems] = useState([]);
+  const [droppedItems, setDroppedItems] = useState<DraggedItem[]>([]);
 
-
-  const handleDrop = (items) => {
+  useEffect(() => {
+    if(getLocalData() === null){
+      setDroppedItems([]);
+    }else {
+      setDroppedItems(getLocalData())
+    }
+  }, [])
+  
+  const handleDrop = (items : DraggedItem[]) => {
+    setLocalData(items);
     setDroppedItems(items);
   };
 
-  const handleDragOver = (e) => {
+  const handleDragOver = (e : React.DragEvent) => {
     e.preventDefault();
   };
 
