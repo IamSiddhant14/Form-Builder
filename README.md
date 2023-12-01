@@ -1,4 +1,7 @@
--> In order to start the project use the following commonds : 
+-> https://almabaseformbuilder.netlify.app/  : Deployed Version 
+
+
+-> In order to set up locally and start the project use the following commands : 
 . npm install
 . npm run dev
 
