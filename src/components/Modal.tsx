@@ -1,6 +1,5 @@
 import { ChangeEvent, useState } from "react";
 import Button from "./Button";
-import close from "../assets/times.svg";
 
 import "../styles/modal.css";
 
@@ -48,7 +47,7 @@ const Modal = ({ isOpen, onClose, selectedItem, onSubmitCallback }: ModalProps) 
             <h1 id="heading" style={{ color: "black", marginLeft: "-2px" }}>
               Edit 
             </h1>
-            <img src={close} alt="close-icon" onClick={onClose} />
+            <img src="./times.svg" alt="close-icon" onClick={onClose} />
           </div>
           <label htmlFor="Text">Text:</label>
           <input

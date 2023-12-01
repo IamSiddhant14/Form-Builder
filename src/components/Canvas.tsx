@@ -11,7 +11,7 @@ const Canvas = ({ onDrop, onDragOver, droppedItems }: CanvasProps) => {
   const [selectedItem, setSelectedItem] = useState<DraggedItem | null>(null);
 
   function handleDownload() {
-    
+
     const droppedItemsData = localStorage.getItem("DroppedItems");
 
     if (droppedItemsData) {
@@ -114,7 +114,6 @@ const Canvas = ({ onDrop, onDragOver, droppedItems }: CanvasProps) => {
   };
 
   const handleClick = (
-    e: React.MouseEvent<HTMLParagraphElement>,
     item: DraggedItem
   ) => {
     const updatedItems = droppedItems.map((dropedItem) => {
@@ -180,7 +179,7 @@ const Canvas = ({ onDrop, onDragOver, droppedItems }: CanvasProps) => {
               ref={itemsRef}
               draggable
               onDragStart={(e) => handleDragStart(e, item)}
-              onClick={(e) => handleClick(e, item)}
+              onClick={() => handleClick(item)}
             >
               This is a {item.text.substring(0, item.text.length - 3)}
             </p>
