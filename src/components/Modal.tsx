@@ -3,17 +3,21 @@ import Button from "./Button";
 
 import "../styles/modal.css";
 
-const Modal = ({ isOpen, onClose, selectedItem, onSubmitCallback }: ModalProps) => {
-
+const Modal = ({
+  isOpen,
+  onClose,
+  selectedItem,
+  onSubmitCallback,
+}: ModalProps) => {
   const [formData, setFormData] = useState<FormState>({
     text: selectedItem?.text.substring(0, selectedItem.text.length - 3) ?? "",
     x: selectedItem?.screenX ?? 0,
-    y: selectedItem?.screenY ?? 0,  
+    y: selectedItem?.screenY ?? 0,
     fontsize: selectedItem?.fontSize ?? 12,
     fontweight: selectedItem?.fontWeight ?? 300,
   });
 
-  const handleChange = (e : ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -22,30 +26,33 @@ const Modal = ({ isOpen, onClose, selectedItem, onSubmitCallback }: ModalProps) 
     }));
   };
 
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement> )=> {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if(selectedItem !== null) {
-    const updatedItem : DraggedItem = {
-      id : selectedItem?.id,
-      text : formData.text + selectedItem?.text.substring(selectedItem.text.length - 3),
-      screenX : Number(formData.x),
-      screenY : Number(formData.y),
-      fontWeight : Number(formData.fontweight),
-      fontSize : Number(formData.fontsize),
-      isClicked : selectedItem?.isClicked
+    if (selectedItem !== null) {
+      const updatedItem: DraggedItem = {
+        id: selectedItem?.id,
+        text:
+          formData.text +
+          selectedItem?.text.substring(selectedItem.text.length - 3),
+        screenX: Number(formData.x),
+        screenY: Number(formData.y),
+        fontWeight: Number(formData.fontweight),
+        fontSize: Number(formData.fontsize),
+        isClicked: selectedItem?.isClicked,
+      };
+      onSubmitCallback(updatedItem);
     }
-    onSubmitCallback(updatedItem);
-   }
     onClose();
-};
+  };
+
+
   return (
     <div className={`modal ${isOpen ? "open" : ""}`}>
-      <div className="modal-overlay" >
+      <div className="modal-overlay">
         <form onSubmit={handleSubmit} className="modal-content">
           <div className="heading-container">
             <h1 id="heading" style={{ color: "black", marginLeft: "-2px" }}>
-              Edit 
+              Edit
             </h1>
             <img src="./times.svg" alt="close-icon" onClick={onClose} />
           </div>
@@ -99,10 +106,10 @@ const Modal = ({ isOpen, onClose, selectedItem, onSubmitCallback }: ModalProps) 
             onChange={handleChange}
             required
           />
-          <Button >{"Save Changes"}</Button>
+          <Button>{"Save Changes"}</Button>
         </form>
       </div>
-    </div >
+    </div>
   );
 };
 

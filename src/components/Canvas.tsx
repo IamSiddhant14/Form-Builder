@@ -70,6 +70,12 @@ const Canvas = ({ onDrop, onDragOver, droppedItems }: CanvasProps) => {
     [droppedItems, onDrop]
   );
 
+  const handleClickedOutside = (e: { target: { className: string; }; }) => {
+      if(e?.target?.className == "modal-overlay" || "modal open"){
+         setIsOpen(false)
+      }
+  }
+
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
 
     e.preventDefault();
@@ -151,6 +157,8 @@ const Canvas = ({ onDrop, onDragOver, droppedItems }: CanvasProps) => {
         document.removeEventListener("mousedown", handleClickOutside);
         document.removeEventListener("keyup", handlekeyPress);
       };
+    }else{
+      document.addEventListener("mousedown", handleClickedOutside);
     }
   }, [handleClickOutside, handlekeyPress, isOpen]);
 
